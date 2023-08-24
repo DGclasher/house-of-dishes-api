@@ -126,7 +126,6 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    # Adding Bearer for POSTMAN testing
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -140,6 +139,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# OAuth Settings
 GOOGLE_CLIENT_ID = config('GOOGLE_AUTH_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_AUTH_SECRET_KEY')
 
@@ -153,6 +153,7 @@ if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
     ]
     SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
+# Djoser Settings
 white_list = ['http://localhost:8000/auth/accounts/profile/']
 
 DJOSER = {
@@ -164,7 +165,7 @@ DJOSER = {
         'current_user': 'users.serializers.UserCreateSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
     },
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list # Redirected URL we listen on google console
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list
 }
 
 # Password validation

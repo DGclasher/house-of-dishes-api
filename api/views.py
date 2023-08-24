@@ -9,7 +9,6 @@ class ChefListCreate(generics.ListCreateAPIView):
     queryset = Chef.objects.all()
     serializer_class = ChefSerializer
     permission_classes = [IsAuthenticated]
-    # authentication_classes= [TokenAuthentication]
 
 class ChefDishesListView(generics.RetrieveAPIView):
     queryset = Chef
