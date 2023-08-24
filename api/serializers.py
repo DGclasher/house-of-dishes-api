@@ -25,3 +25,4 @@ class ChefListSerializer(serializers.ModelSerializer):
     def get_dishes(self, obj):
         dishes = Dish.objects.filter(chef=obj)
         return DishMinimalSerializer(dishes, many=True).data
+    

@@ -1,11 +1,15 @@
 from .models import *
 from .serializers import *
 from rest_framework import viewsets, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 class ChefListCreate(generics.ListCreateAPIView):
     queryset = Chef.objects.all()
     serializer_class = ChefSerializer
+    permission_classes = [IsAuthenticated]
+    # authentication_classes= [TokenAuthentication]
 
 class ChefDishesListView(generics.RetrieveAPIView):
     queryset = Chef

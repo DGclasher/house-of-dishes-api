@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,15 +26,25 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
-
-ALLOWED_HOSTS = []
+HOSTS = config('HOSTS')
+ALLOWED_HOSTS = [] if DEBUG else HOSTS.split(',')
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # Applications
     'api',
+    'users',
+
+    # Third party apps
+    'djoser',
+    'corsheaders',
+    'social_django',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'houseOfDishesAPI.urls'
@@ -65,6 +78,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -72,10 +87,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'houseOfDishesAPI.wsgi.application'
 
+AUTH_USER_MODEL = 'users.UserAccount'
 
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASE = config('DATABASE')
 if DATABASE == "sqlite":
     DATABASES = {
@@ -97,13 +111,60 @@ elif DATABASE == "postgresql":
         }
     }
 
+# API Settings
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     )
+}
+
+SIMPLE_JWT = {
+    # Adding Bearer for POSTMAN testing
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+    ),
+}
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+GOOGLE_CLIENT_ID = config('GOOGLE_AUTH_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_AUTH_SECRET_KEY')
+
+if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_CLIENT_ID
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = GOOGLE_CLIENT_SECRET
+    SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+    ]
+    SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
+
+white_list = ['http://localhost:8000/auth/accounts/profile/']
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.UserCreateSerializer',
+        'current_user': 'users.serializers.UserCreateSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+    },
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list # Redirected URL we listen on google console
 }
 
 # Password validation
@@ -146,3 +207,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#   'http://localhost:8000',
+# )

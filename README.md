@@ -4,13 +4,14 @@
 
 Create python venv in root dir of project
 ```
-python3 -m venv venv && source venv/bin/activate
+python -m venv venv && source venv/bin/activate
 ```
+Create a `.env` file at the root directory of project, refer to [this](./.env.example) for `.env` file. 
 Migrate
 ```
-python3 manage.py migrate --noinput 
+python manage.py migrate --noinput 
 ```
 Run the server
 ```
-python3 manage.py runserver
+python manage.py runserver
 ```

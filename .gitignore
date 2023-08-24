@@ -1,4 +1,5 @@
 .env
 venv
+test
 db.sqlite3
 **/__pycache__
