@@ -1,28 +1,31 @@
 from .models import *
 from .serializers import *
-from rest_framework import viewsets, generics
-from rest_framework.authentication import TokenAuthentication
+from .permissions import *
+from users.models import ChefUser
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-class ChefListCreate(generics.ListCreateAPIView):
-    queryset = Chef.objects.all()
+class ChefListView(generics.ListAPIView):
+    queryset = ChefUser.objects.all()
     serializer_class = ChefSerializer
-    permission_classes = [IsAuthenticated]
 
 class ChefDishesListView(generics.RetrieveAPIView):
-    queryset = Chef
+    queryset = ChefUser
     serializer_class = ChefListSerializer
     lookup_field = 'pk'
 
-class ChefUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Chef.objects.all()
-    serializer_class = ChefSerializer
-
-class DishListCreateView(generics.ListCreateAPIView):
+class DishListView(generics.ListAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
+
+class DishListCreateView(generics.CreateAPIView):
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
+    permission_classes = [IsAuthenticated, IsChef]
 
 class DishUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
+    permission_classes = [IsAuthenticated, IsChef]
+

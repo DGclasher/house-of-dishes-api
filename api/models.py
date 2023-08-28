@@ -1,18 +1,11 @@
 from django.db import models
-
-class Chef(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-
-    def __str__(self):
-        return self.name
+from users.models import ChefUser
 
 class Dish(models.Model):
     name = models.CharField(max_length=100)
     ingredients = models.TextField()
     instructions = models.TextField()
-    chef = models.ForeignKey(Chef, on_delete=models.CASCADE, related_name='dish_set')
-
+    chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
     VEG_NON_VEG_CHOICES = (
         ('Veg', 'Vegetarian'),
         ('NonVeg', 'Non-Vegetarian'),

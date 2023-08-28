@@ -1,4 +1,5 @@
 from .models import *
+from users.models import ChefUser
 from rest_framework import serializers
 
 
@@ -14,14 +15,14 @@ class DishMinimalSerializer(serializers.ModelSerializer):
 
 class ChefSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Chef
-        fields = ['id', 'name', 'email']
+        model = ChefUser
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 class ChefListSerializer(serializers.ModelSerializer):
     dishes = serializers.SerializerMethodField()
     class Meta:
-        model = Chef
-        fields = ['id', 'name', 'email', 'dishes']
+        model = ChefUser
+        fields = ['id', 'first_name', 'last_name', 'email', 'dishes']
     def get_dishes(self, obj):
         dishes = Dish.objects.filter(chef=obj)
         return DishMinimalSerializer(dishes, many=True).data
