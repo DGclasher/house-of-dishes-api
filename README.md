@@ -2,6 +2,8 @@
 
 ### Setup local development server
 Create a `.env` file at the root directory of project, refer to [this](./.env.example) for `.env` file. 
+For `SECRET_KEY`, get one from [here](https://djecrety.ir/).
+For Google auth keys, get your keys from [here](https://console.cloud.google.com/apis/credentials).
 #### For Linux Users
 Create python venv in root dir of project
 ```
