@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_random_secret_key()
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # Applications
     'api',
     'users',
+    'team',
 
     # Third party apps
     'djoser',
@@ -128,7 +129,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_TOKEN_CLASSES': (
         'rest_framework_simplejwt.tokens.AccessToken',
@@ -166,7 +167,8 @@ DJOSER = {
         'current_user': 'users.serializers.UserCreateSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
     },
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list,
+    "TOKEN_MODEL" : None
 }
 
 # Password validation
