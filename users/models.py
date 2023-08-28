@@ -5,13 +5,10 @@ class UserAccountManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
-
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-
         user.set_password(password)
         user.save()
-
         return user
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
@@ -34,3 +31,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.email
+
+class ChefUser(UserAccount):
+    bio = models.TextField(max_length=500, blank=True)
+    profile_picture = models.ImageField(upload_to='chef_profiles/', blank=True, null=True)
+
