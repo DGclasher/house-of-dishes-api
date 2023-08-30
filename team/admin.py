@@ -1,5 +1,5 @@
 from .models import *
 from django.contrib import admin
 
-admin.site.register(CoFounders)
+admin.site.register(CoFounder)
 admin.site.register(Employee)
