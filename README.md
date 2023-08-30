@@ -22,7 +22,7 @@ Activate the environment
 ```
 .\venv\Scripts\activate
 ```
-#### Same for both
+#### Same for both (Need to do this after every pull)
 Install dependencies
 ```
 pip install -r requirements.txt
