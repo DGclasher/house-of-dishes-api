@@ -28,19 +28,22 @@ class ChefAccountSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password_repeat', None)
+        profile_picture = validated_data.pop('profile_picture', None)
         chef_account = ChefUser(
             email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             bio=validated_data.get('bio', ''),
-            profile_picture=validated_data.get('profile_picture', None)
         )
         chef_account.set_password(validated_data['password'])
         chef_account.save()
         chefs_group, created = Group.objects.get_or_create(name='Chefs')
         chef_account.groups.add(chefs_group)
+        if profile_picture:
+            chef_account.profile_picture = profile_picture
+            chef_account.save()
         return chef_account
-    
+
 class ChefLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)

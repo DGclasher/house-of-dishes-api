@@ -6,9 +6,6 @@ from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from rest_framework_simplejwt.views import TokenObtainPairView
-
 
 class RedirectSocial(View):
     def get(self, request, *args, **kwargs):
@@ -16,15 +13,17 @@ class RedirectSocial(View):
         json_obj = {'code': code, 'state': state}
         return JsonResponse(json_obj)
 
-
 class ChefListCreateView(generics.ListCreateAPIView):
-    queryset = ChefUser
+    queryset = ChefUser.objects.all()
     serializer_class = ChefAccountSerializer
     permission_classes = []
 
+class ChefUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ChefUser.objects.all()
+    serializer_class = ChefAccountSerializer
+
 class ChefLoginView(APIView):
     permission_classes = []
-
     def post(self, request, *args, **kwargs):
         serializer = ChefLoginSerializer(data=request.data)
         if serializer.is_valid():

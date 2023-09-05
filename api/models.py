@@ -1,3 +1,5 @@
+from PIL import Image
+from io import BytesIO
 from django.db import models
 from users.models import ChefUser
 
@@ -22,6 +24,16 @@ class Dish(models.Model):
     quantity = models.PositiveIntegerField(default=False)
     customizable_ingredients = models.BooleanField(default=False)
     cooking_time = models.CharField(max_length=100, blank=True)
+    dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.dish_picture:
+            image = Image.open(self.dish_picture)
+            output_io = BytesIO()
+            image = image.resize((600, 400))
+            image.save(output_io, format='JPEG', quality=70)
+            self.dish_picture.file = output_io
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

@@ -17,6 +17,7 @@ class CoFounder(models.Model):
         if self.profile_picture:
             image = Image.open(self.profile_picture)
             image_io = BytesIO()
+            image.resize((300, 300))
             image.save(image_io, format='JPEG', quality=60)
             self.profile_picture.file = image_io
 
@@ -43,6 +44,7 @@ class Employee(models.Model):
         if self.profile_picture:
             image = Image.open(self.profile_picture)
             image_io = BytesIO()
+            image.resize((300, 300))
             image.save(image_io, format='JPEG', quality=60)
             self.profile_picture.file = image_io
         super().save(*args, **kwargs)
