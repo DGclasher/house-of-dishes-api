@@ -18,6 +18,19 @@ class ChefListCreateView(generics.ListCreateAPIView):
     serializer_class = ChefAccountSerializer
     permission_classes = []
 
+    def post(self, request, *args, **kwargs):
+        serializer = ChefAccountSerializer(data=request.data)
+        if serializer.is_valid():
+            chef = serializer.save()
+            refresh = RefreshToken.for_user(chef)
+            access = str(refresh.access_token)
+            data = {    
+                "access_token":access,
+                "refresh_token":str(refresh)
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
+
 class ChefUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ChefUser.objects.all()
     serializer_class = ChefAccountSerializer

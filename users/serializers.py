@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
