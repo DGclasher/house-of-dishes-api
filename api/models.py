@@ -3,10 +3,18 @@ from io import BytesIO
 from django.db import models
 from users.models import ChefUser
 
+class DishInstruction(models.Model):
+    instruction_text = models.TextField()
+    time_required = models.IntegerField()
+
+    def __str__(self):
+        return self.instruction_text
+
 class Dish(models.Model):
     name = models.CharField(max_length=100)
     ingredients = models.TextField()
-    instructions = models.TextField()
+    instructions = models.TextField(default=None)
+    # instructions = models.ManyToManyField(DishInstruction, related_name='dish')
     chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
     VEG_NON_VEG_CHOICES = (
         ('Veg', 'Vegetarian'),
@@ -37,3 +45,4 @@ class Dish(models.Model):
 
     def __str__(self):
         return self.name
+    
