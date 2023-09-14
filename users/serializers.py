@@ -1,10 +1,10 @@
+import re
 from .models import *
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -25,6 +25,14 @@ class ChefAccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password'] != data['password_repeat']:
             raise serializers.ValidationError("Passwords do not match.")
+        if len(data['password']) < 10:
+            raise serializers.ValidationError("Password length should be more than equal to 10")
+        if not re.findall('\d', data['password']):
+            raise serializers.ValidationError("Password must contain atleast 1 digit, 0-9")
+        if not re.findall('[A-Z]', data['password']):
+            raise serializers.ValidationError("Password must contain atleast 1 uppercase letter, A-Z")
+        if not re.findall('[a-z]', data['password']):
+            raise serializers.ValidationError("Password must contain atleast 1 lowercase letter, a-z")
         return data
 
     def create(self, validated_data):
