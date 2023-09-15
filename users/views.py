@@ -55,4 +55,5 @@ class ChefLoginView(APIView):
                 "refresh_token": str(refresh)
             }
             return Response(data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return Response({"message":"Unable to login with given credentials."}, status=status.HTTP_401_UNAUTHORIZED)
