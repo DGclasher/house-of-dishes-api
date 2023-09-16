@@ -25,6 +25,7 @@ class ChefListCreateView(generics.ListCreateAPIView):
             refresh = RefreshToken.for_user(chef)
             access = str(refresh.access_token)
             data = {
+                "account_id":chef.id,
                 "email":chef.email,
                 "first_name":chef.first_name,
                 "access_token":access,
@@ -49,6 +50,7 @@ class ChefLoginView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             data = {
+                "account_id":user.id,
                 "email":user.email,
                 "first_name":user.first_name,
                 "access_token": access_token,
