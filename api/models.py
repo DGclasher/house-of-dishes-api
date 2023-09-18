@@ -14,6 +14,7 @@ class Dish(models.Model):
     name = models.CharField(max_length=100)
     ingredients = models.TextField()
     instructions = models.TextField(default=False)
+    number_of_people = models.IntegerField(default=1, blank=True)
     # instructions = models.ManyToManyField(DishInstruction, related_name='dish')
     chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
     VEG_NON_VEG_CHOICES = (
