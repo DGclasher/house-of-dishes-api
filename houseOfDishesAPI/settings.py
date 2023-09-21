@@ -135,7 +135,7 @@ if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
     SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 # Djoser Settings
-white_list = ['http://localhost:8000/auth/accounts/profile/']
+white_list = ['http://localhost:8000/auth/accounts/profile/','http://localhost:5173/login/']
 
 DJOSER = {
     "LOGIN_FIELD": "email",
@@ -190,7 +190,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = (
 #   'http://localhost:8000',
 # )
+
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

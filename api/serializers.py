@@ -43,4 +43,8 @@ class ChefListSerializer(serializers.ModelSerializer):
     def get_dishes(self, obj):
         dishes = Dish.objects.filter(chef=obj)
         return DishMinimalSerializer(dishes, many=True).data
-    
+
+class ContactSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    message = serializers.CharField()
