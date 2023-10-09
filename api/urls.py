@@ -7,5 +7,6 @@ urlpatterns = [
     path('dish/<int:pk>/', DishUpdateDeleteView.as_view(), name='dish_update_delete'),
     path('chef/', ChefListView.as_view(), name='chef_list_create'),
     path('chef/<int:pk>/dishes/', ChefDishesListView.as_view(), name='chef_dishes'),
-    path('contact/', ContactView.as_view(), name='contact')
+    path('contact/', ContactView.as_view(), name='contact'),
+    path('dishstate/<str:state_slug>/' , DishListState.as_view() , name='dish_by_state')
 ]
