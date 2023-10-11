@@ -3,41 +3,34 @@ from .serializers import *
 from .permissions import *
 from decouple import config
 from users.models import ChefUser
-from rest_framework.views import APIView
 from django.core.mail import send_mail
+from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BaseAuthentication
-
 
 class ChefListView(generics.ListAPIView):
     queryset = ChefUser.objects.all()
     serializer_class = ChefSerializer
-
 
 class ChefDishesListView(generics.RetrieveAPIView):
     queryset = ChefUser
     serializer_class = ChefListSerializer
     lookup_field = 'pk'
 
-
 class DishListView(generics.ListAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-
 
 class DishListCreateView(generics.CreateAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     permission_classes = [IsAuthenticated, IsChef]
 
-
 class DishUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     permission_classes = [IsAuthenticated, IsChef]
-
 
 class ContactView(APIView):
     permission_classes = []
@@ -64,16 +57,10 @@ class DishListState(APIView):
     permission_classes = []
 
     def get(self, request, state_slug):
-        # Query the data to Retrive the Specific Data
         data_queryset = Dish.objects.filter(popularity_state=state_slug)
-
-        # Converting  the QuerySet to a list
         data_list = list(data_queryset)
-
-        # Serializing the data only if it's valid
         serializer = DishSerializer(data=data_list, many=True)
         if serializer.is_valid():
             return Response({'success': True, 'data': serializer.data})
         else:
-            # Handle the case where the serializer is not valid (e.g., validation errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

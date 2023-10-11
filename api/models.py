@@ -10,12 +10,17 @@ class DishInstruction(models.Model):
     def __str__(self):
         return self.instruction_text
 
+class Instructions(models.Model):
+    step = models.CharField(blank=False, max_length=200)
+    dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='instructions')
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=100)
+    quantity = models.IntegerField(blank=False)
+    dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='ingredients')
+
 class Dish(models.Model):
     name = models.CharField(max_length=100)
-    ingredients = models.TextField()
-    instructions = models.TextField(default=False)
-    number_of_people = models.IntegerField(default=1, blank=True)
-    # instructions = models.ManyToManyField(DishInstruction, related_name='dish')
     chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
     VEG_NON_VEG_CHOICES = (
         ('Veg', 'Vegetarian'),
@@ -30,10 +35,10 @@ class Dish(models.Model):
         ('Dessert', 'Dessert'),
     )
     main_course_starter_dessert = models.CharField(max_length=12, choices=COURSE_CHOICES, default='MainCourse')
-    quantity = models.PositiveIntegerField(default=False)
     customizable_ingredients = models.BooleanField(default=False)
-    cooking_time = models.CharField(max_length=100, blank=True)
+    cooking_time = models.IntegerField(blank=True)
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
+    dish_video_url = models.CharField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
         if self.dish_picture:
