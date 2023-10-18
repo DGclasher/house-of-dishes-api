@@ -8,5 +8,9 @@ urlpatterns = [
     path('chef/', ChefListView.as_view(), name='chef_list_create'),
     path('chef/<int:pk>/dishes/', ChefDishesListView.as_view(), name='chef_dishes'),
     path('contact/', ContactView.as_view(), name='contact'),
-    path('dishstate/<str:state_slug>/' , DishListState.as_view() , name='dish_by_state')
+    path('dish/filter/<str:state_slug>/state' , DishListState.as_view() , name='dish_by_state'),
+    path('dish/filter/<str:course_slug>/course' ,DishListCourse.as_view() , name="dish_list_course" ),
+    path('dish/filter/<str:choice_slug>/choice' ,DishChoice.as_view() , name="dish_list_choice" ),
+    path('dish/filter/<int:dish_id>/byid' ,DishById.as_view() , name="dish_by_id" ),
+
 ]
