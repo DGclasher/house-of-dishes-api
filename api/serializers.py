@@ -7,6 +7,7 @@ class InstructionSerializer(serializers.ModelSerializer):
         model = Instructions
         fields = ('step',)
 
+
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
@@ -15,14 +16,15 @@ class IngredientSerializer(serializers.ModelSerializer):
 class DishSerializer(serializers.ModelSerializer):
     ingredients = IngredientSerializer(many=True)
     instructions = InstructionSerializer(many=True)
+
     class Meta:
         model = Dish
         fields = (
             'name', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
             'cuisine', 'main_course_starter_dessert', 'customizable_ingredients',
-            'cooking_time', 'dish_picture','dish_video_url'
+            'cooking_time', 'dish_picture', 'dish_video_url'
         )
-    
+
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
         instructions_data = validated_data.pop('instructions')
@@ -46,6 +48,7 @@ class ChefSerializer(serializers.ModelSerializer):
 
 class ChefListSerializer(serializers.ModelSerializer):
     dishes = serializers.SerializerMethodField()
+
     class Meta:
         model = ChefUser
         fields = ['id', 'first_name', 'last_name',
@@ -54,6 +57,7 @@ class ChefListSerializer(serializers.ModelSerializer):
     def get_dishes(self, obj):
         dishes = Dish.objects.filter(chef=obj)
         return DishMinimalSerializer(dishes, many=True).data
+
 
 class ContactSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)

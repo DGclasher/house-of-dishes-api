@@ -146,3 +146,28 @@ class DishById(APIView):
             error_message = str(e)  # Get the string representation of the exception
 
             return Response({'success': False, 'error': error_message})
+
+class DishByIngredients(APIView):
+    permission_classes = []
+    serializer_class = DishSerializer
+
+    def post(self, request):
+        try:
+            filters = request.data
+            ingredients = filters['ingredients']
+
+            dishes = Dish.objects.all()
+            for ingredient in ingredients:
+                dishes = dishes.filter(ingredients__name=ingredient)
+
+            if 'main_course_starter_dessert' in filters:
+                dishes = dishes.filter(main_course_starter_dessert=filters['main_course_starter_dessert'])
+
+            if 'veg_non_veg' in filters:
+                dishes = dishes.filter(veg_non_veg=filters['veg_non_veg'])
+
+            serializer = DishSerializer(dishes, many=True)
+
+            return Response(serializer.data)
+        except Exception as error :
+            return  Response({"error" : error})
