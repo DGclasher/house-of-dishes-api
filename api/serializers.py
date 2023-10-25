@@ -2,7 +2,6 @@ from .models import *
 from users.models import ChefUser
 from rest_framework import serializers
 
-
 class InstructionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructions
@@ -13,7 +12,6 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = ('name', 'quantity')
-
 
 class DishSerializer(serializers.ModelSerializer):
     ingredients = IngredientSerializer(many=True)
@@ -37,12 +35,10 @@ class DishSerializer(serializers.ModelSerializer):
             Instructions.objects.create(dish=dish, **instruction_data)
         return dish
 
-
 class DishMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
         fields = ['id', 'name']
-
 
 class ChefSerializer(serializers.ModelSerializer):
     class Meta:
