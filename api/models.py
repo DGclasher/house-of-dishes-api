@@ -13,6 +13,7 @@ class DishInstruction(models.Model):
 class Instructions(models.Model):
     step = models.CharField(blank=False, max_length=200)
     dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='instructions')
+    instruction_video_url = models.CharField(max_length=500, blank=True)
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
@@ -38,7 +39,6 @@ class Dish(models.Model):
     customizable_ingredients = models.BooleanField(default=False)
     cooking_time = models.IntegerField(blank=True, default=None)
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
-    dish_video_url = models.CharField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
         if self.dish_picture:
