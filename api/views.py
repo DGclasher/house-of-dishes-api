@@ -21,6 +21,15 @@ class ChefDishesListView(generics.RetrieveAPIView):
 class DishListView(generics.ListAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
+    permission_classes = []
+    authentication_classes = []
+
+class DishByIdView(generics.RetrieveAPIView):
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
+    authentication_classes = []
+    permission_classes = []
+    lookup_field = 'id'
 
 class DishListCreateView(generics.CreateAPIView):
     queryset = Dish.objects.all()
@@ -34,14 +43,12 @@ class DishUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
 class ContactView(APIView):
     permission_classes = []
-
     def post(self, request, *args, **kwargs):
         serializer = ContactSerializer(data=request.data)
         if serializer.is_valid():
             name = serializer.validated_data['name']
             email = serializer.validated_data['email']
             message = serializer.validated_data['message']
-
             subject = f"Contact from {name}"
             email_message = f'Name: {name}\nEmail: {email}\nMessage:\n{message}'
             recipients = config('RECIPIENTS').split(',')
@@ -51,123 +58,63 @@ class ContactView(APIView):
             except:
                 return Response({'error': 'Failed to send message.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-class DishListState(APIView):
+class DishListState(generics.ListAPIView):
+    queryset = Dish.objects.all()
+    permission_classes = []
     authentication_classes = []
-    permission_classes = []
-
-    def get(self, request, state_slug):
-        data_queryset = Dish.objects.filter(popularity_state=state_slug)
-        data_list = list(data_queryset)
-        serializer = DishSerializer(data=data_list, many=True)
-        if serializer.is_valid():
-            return Response({'success': True, 'data': serializer.data})
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DishListCourse(APIView):
-    permission_classes = []
-
-    def get(self, request, course_slug):
-
-        try:
-
-            # Query the data to Retrive the Specific Data
-            data_queryset = Dish.objects.filter(main_course_starter_dessert=course_slug)
-
-            # Converting  the QuerySet to a list
-            data_list = list(data_queryset)
-
-            # Serializing the data only if it's valid
-            serializer = DishSerializer(data=data_list, many=True)
-            if serializer.is_valid():
-                return Response({'success': True, 'data': serializer.data })
-            else:
-                # Handle the case where the serializer is not valid (e.g., validation errors)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as j:
-            return Response({'success ': False, 'error': j})
-
-
-
-class DishChoice(APIView):
-
-    permission_classes = []
-
-    def get(self, request, choice_slug):
-
-        try:
-
-            # Query the data to Retrive the Specific Data
-            data_queryset = Dish.objects.filter(veg_non_veg=choice_slug)
-
-            # Converting  the QuerySet to a list
-            data_list = list(data_queryset)
-
-            # Serializing the data only if it's valid
-            serializer = DishSerializer(data=data_list, many=True)
-            if serializer.is_valid():
-                return Response({'success': True, 'data': serializer.data })
-            else:
-                # Handle the case where the serializer is not valid (e.g., validation errors)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            error_message = str(e)  # Get the string representation of the exception
-
-            return Response({'success': False, 'error': error_message})
-
-
-
-class DishById(APIView):
-    permission_classes = []
-
-    def get(self, request, dish_id):
-
-        try:
-
-            # Query the data to Retrive the Specific Data
-            data_queryset = Dish.objects.filter(id=dish_id)
-
-            # Converting  the QuerySet to a list
-            data_list = list(data_queryset)
-
-            # Serializing the data only if it's valid
-            serializer = DishSerializer(data=data_list, many=True)
-            if serializer.is_valid():
-                return Response({'success': True, 'data': serializer.data , 'id' : dish_id})
-            else:
-                # Handle the case where the serializer is not valid (e.g., validation errors)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            error_message = str(e)  # Get the string representation of the exception
-
-            return Response({'success': False, 'error': error_message})
-
-class DishByIngredients(APIView):
-    permission_classes = []
     serializer_class = DishSerializer
 
     def post(self, request):
+        state=request.data['popularity_state']
         try:
-            filters = request.data
-            ingredients = filters['ingredients']
-
-            dishes = Dish.objects.all()
-            for ingredient in ingredients:
-                dishes = dishes.filter(ingredients__name=ingredient)
-
-            if 'main_course_starter_dessert' in filters:
-                dishes = dishes.filter(main_course_starter_dessert=filters['main_course_starter_dessert'])
-
-            if 'veg_non_veg' in filters:
-                dishes = dishes.filter(veg_non_veg=filters['veg_non_veg'])
-
+            dishes = Dish.objects.filter(popularity_state=state)
             serializer = DishSerializer(dishes, many=True)
+            return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+        except Dish.DoesNotExist:
+            return Response({'message':'Data does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'err':str(e), 'serializer_errors':serializer.error_messages})
 
-            return Response(serializer.data)
-        except Exception as error :
-            return  Response({"error" : error})
+class DishListCourse(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
+    def post(self, request):
+        course = request.data['course']
+        try:
+            dishes = Dish.objects.filter(main_course_starter_dessert=course)
+            serializer = DishSerializer(dishes, many=True)
+            return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+        except Dish.DoesNotExist:
+            return Response({'message':'Dish does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'err':str(e), 'serializer_errors':serializer.error_messages}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DishListChoice(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
+    def post(self, request):
+        choice = request.data['choice']
+        try:
+            dishes = Dish.objects.filter(veg_non_veg=choice)
+            serializer = DishSerializer(dishes, many=True)
+            return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+        except Dish.DoesNotExist:
+            return Response({'message':'Dish does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'err':str(e), 'serializer_errors':serializer.error_messages}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DishListIngredients(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request):
+        ingredients = request.data['ingredients']
+        dishes = []
+        for ingredient in ingredients:
+            try:
+                dishes.extend(Dish.objects.filter(ingredients__name=ingredient))
+            except:
+                pass
+        serializer = DishSerializer(dishes, many=True)
+        return Response({'data':serializer.data}, status=status.HTTP_200_OK)
+    
