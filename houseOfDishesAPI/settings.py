@@ -136,7 +136,8 @@ if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
     SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 # Djoser Settings
-white_list = ['http://localhost:8000/auth/accounts/profile/','http://localhost:5173/login/']
+white_list = ['http://localhost:8000/auth/accounts/profile/',
+              'http://localhost:5173/login/']
 
 DJOSER = {
     "LOGIN_FIELD": "email",
@@ -148,12 +149,12 @@ DJOSER = {
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
     },
     'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': white_list,
-    "TOKEN_MODEL" : None
+    "TOKEN_MODEL": None
 }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-     {
+    {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
@@ -182,7 +183,8 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media
 USE_S3 = int(config('USE_S3'))
