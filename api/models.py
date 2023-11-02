@@ -15,10 +15,16 @@ class Instructions(models.Model):
     dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='instructions')
     instruction_video_url = models.CharField(max_length=500, blank=True)
 
+    def __str__(self) -> str:
+        return f"{self.step}"
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.IntegerField(blank=False)
     dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='ingredients')
+
+    def __str__(self) -> str:
+        return f"Name: {self.name} Quantity: {self.quantity}"
 
 class Dish(models.Model):
     name = models.CharField(max_length=100)
