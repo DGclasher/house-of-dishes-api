@@ -81,7 +81,7 @@ class DishListCourse(generics.ListAPIView):
     def post(self, request):
         course = request.data['course']
         try:
-            dishes = Dish.objects.filter(main_course_starter_dessert=course)
+            dishes = Dish.objects.filter(course_type=course)
             serializer = DishSerializer(dishes, many=True)
             return Response({'data':serializer.data}, status=status.HTTP_200_OK)
         except Dish.DoesNotExist:
