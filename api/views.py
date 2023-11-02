@@ -34,7 +34,8 @@ class DishByIdView(generics.RetrieveAPIView):
 class DishListCreateView(generics.CreateAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    permission_classes = [IsAuthenticated, IsChef]
+    # permission_classes = [IsAuthenticated, IsChef]
+    permission_classes = []
 
 class DishUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dish.objects.all()
@@ -117,4 +118,15 @@ class DishListIngredients(generics.ListAPIView):
                 pass
         serializer = DishSerializer(dishes, many=True)
         return Response({'data':serializer.data}, status=status.HTTP_200_OK)
-    
+class DishFilter(APIView):
+    permission_classes = []
+    serializer_class = DishSerializer
+
+    def post(self, request):
+        try:
+            filters = request.data
+            dishes = Dish.objects.filter(name=filters['name'] , veg_non_veg=filters['veg_non_veg'] , main_course_starter_dessert=filters['course_choice'])
+            serializer = DishSerializer(dishes, many=True)
+            return  Response({"success" : True , "data" : serializer.data})
+        except Exception as j:
+            return  Response({"success" : False , "error" : j})
