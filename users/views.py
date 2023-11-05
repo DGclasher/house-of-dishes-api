@@ -59,3 +59,13 @@ class ChefLoginView(APIView):
             return Response(data, status=status.HTTP_200_OK)
         
         return Response({"message":"Unable to login with given credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+class RequestPasswordReset(generics.GenericAPIView):
+    serializer_class = RequestPasswordResetSerializer
+    authentication_classes = []
+    permission_classes = []
+    def post(self, request):
+        serializer = RequestPasswordResetSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            pass
+        pass

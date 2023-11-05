@@ -137,13 +137,19 @@ if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
 
 # Djoser Settings
 if DEBUG:
-    white_list = ['http://localhost:8000/auth/accounts/profile/','http://localhost:5173/login/']
+    white_list = ['http://localhost:8000/auth/accounts/profile/',
+                  'http://localhost:5173/login/']
 else:
-    white_list = ['https://dashboard.aichefmaster.com/login/','https://api.aichefmaster.com/auth/accounts/profile/']
+    white_list = ['https://dashboard.aichefmaster.com/login/',
+                  'https://api.aichefmaster.com/auth/accounts/profile/']
 
 DJOSER = {
     "LOGIN_FIELD": "email",
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND':True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
+    'PASSWORD_RESET_CONFIRM_RETYPE':True,
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
         'user': 'users.serializers.UserCreateSerializer',

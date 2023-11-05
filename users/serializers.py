@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 
 User = get_user_model()
 
@@ -65,8 +68,26 @@ class ChefLoginSerializer(serializers.Serializer):
             if user:
                 data['user'] = user
             else:
-                raise serializers.ValidationError("Unable to login with given credentials")
+                raise serializers.ValidationError("Unable to login with given credentials.")
         else:
-            raise serializers.ValidationError("Must include email and password fields")
+            raise serializers.ValidationError("Must include email and password fields.")
         return data
 
+class RequestPasswordResetSerializer(serializers.Serializer):
+    email = serializers.CharField(min_length=5)
+    
+    class Meta:
+        fields = ['email']
+    
+    def validate(self, validated_data):
+        try:
+            email = validated_data.get('email')
+            if ChefUser.objects.filter(email=email).exists():
+                user = ChefUser.objects.get(email=email)
+                uidb64 = urlsafe_base64_encode(user.id)
+                token = PasswordResetTokenGenerator().make_token(user)
+
+
+            return validated_data
+        except:
+            pass

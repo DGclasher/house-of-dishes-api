@@ -23,10 +23,10 @@ class Ingredient(models.Model):
 class Dish(models.Model):
     name = models.CharField(max_length=100)
     chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
-    veg_non_veg = models.CharField(max_length=7, blank=False, default=None)
+    veg_non_veg = models.CharField(max_length=16, blank=False, default=None)
     popularity_state = models.CharField(max_length=100, blank=True)
     cuisine = models.CharField(max_length=100, blank=True, default=None)
-    course_type = models.CharField(max_length=12, blank=False, default=None)
+    course_type = models.CharField(max_length=20, blank=False, default=None)
     cooking_time = models.CharField(blank=True, default=None, max_length=10)
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)

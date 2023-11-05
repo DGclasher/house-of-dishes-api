@@ -142,7 +142,5 @@ class DishSearchView(APIView):
                 return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
             serializer = DishSerializer(dishes, many=True)
             return Response({'message':'Dish already exists.' ,'data':serializer.data}, status=status.HTTP_200_OK)
-        except Dish.DoesNotExist:
-            return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'err':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

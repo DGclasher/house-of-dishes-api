@@ -8,7 +8,7 @@ urlpatterns = [
     path('dish/filter/course/' ,DishListCourse.as_view() , name="dish_list_course" ),
     path('dish/filter/choice/' ,DishListChoice.as_view() , name="dish_list_choice" ),
     path('dish/filter/ingredients/' ,DishListIngredients.as_view() , name="dish_list_ingredients" ),
-    path('dish/filter/search/', DishSearchView.as_view(), name="search-dish"),
+    path('dish/filter/search/', DishSearchView.as_view(), name="search_dish"),
 
     path('dish/create/', DishListCreateView.as_view(), name='dish_create'),
     path('dish/<int:pk>/chef', DishUpdateDeleteView.as_view(), name='dish_update_delete'),
@@ -16,5 +16,4 @@ urlpatterns = [
     path('chef/<int:pk>/dishes/', ChefDishesListView.as_view(), name='chef_dishes'),
 
     path('contact/', ContactView.as_view(), name='contact'),
-    path('dish/filter/<str:dish_name>/name', DishSearchView.as_view(), name="dish_by_name"),
 ]
