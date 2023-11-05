@@ -137,7 +137,9 @@ class DishSearchView(APIView):
     def post(self, request):
         try:
             query = request.data['query']
-            dishes = Dish.objects.filter(name__iregex=rf'{query}')
+            dishes = Dish.objects.filter(name__icontains=rf'{query}')
+            if not dishes:
+                return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
             serializer = DishSerializer(dishes, many=True)
             return Response({'message':'Dish already exists.' ,'data':serializer.data}, status=status.HTTP_200_OK)
         except Dish.DoesNotExist:
