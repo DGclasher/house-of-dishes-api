@@ -3,13 +3,6 @@ from io import BytesIO
 from django.db import models
 from users.models import ChefUser
 
-class DishInstruction(models.Model):
-    instruction_text = models.TextField()
-    time_required = models.IntegerField()
-
-    def __str__(self):
-        return self.instruction_text
-
 class Instructions(models.Model):
     step = models.CharField(blank=False, max_length=200)
     dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='instructions')

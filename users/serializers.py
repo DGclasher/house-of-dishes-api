@@ -69,4 +69,4 @@ class ChefLoginSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError("Must include email and password fields")
         return data
-    
+
