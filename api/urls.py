@@ -15,5 +15,6 @@ urlpatterns = [
     path('chef/<int:pk>/dishes/', ChefDishesListView.as_view(), name='chef_dishes'),
 
     path('contact/', ContactView.as_view(), name='contact'),
-
+    path('dish/filter/search', DishListFilter.as_view(), name="search-dish"),
+    path('dish/filter/<str:dish_name>/name', DishListName.as_view(), name="dish_by_name"),
 ]
