@@ -1,3 +1,4 @@
+import re
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -137,7 +138,8 @@ class DishSearchView(APIView):
     def post(self, request):
         try:
             query = request.data['query']
-            if query == " ":
+            reg = re.search('\w',query)
+            if not reg:
                 return Response({'message':'Please provide a dish name to be searched.'}, status=status.HTTP_204_NO_CONTENT)
             dishes = Dish.objects.filter(name__icontains=rf'{query}')
             if not dishes:
