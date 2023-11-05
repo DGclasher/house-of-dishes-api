@@ -2,6 +2,7 @@ from PIL import Image
 from io import BytesIO
 from django.db import models
 from users.models import ChefUser
+from django.utils import timezone
 
 class Instructions(models.Model):
     step = models.CharField(blank=False, max_length=200)
@@ -22,21 +23,14 @@ class Ingredient(models.Model):
 class Dish(models.Model):
     name = models.CharField(max_length=100)
     chef = models.ForeignKey(ChefUser, on_delete=models.CASCADE, related_name='dish_set')
-    VEG_NON_VEG_CHOICES = (
-        ('Veg', 'Vegetarian'),
-        ('NonVeg', 'Non-Vegetarian'),
-    )
-    veg_non_veg = models.CharField(max_length=7, choices=VEG_NON_VEG_CHOICES, default='Veg')
+    veg_non_veg = models.CharField(max_length=7, blank=False, default=None)
     popularity_state = models.CharField(max_length=100, blank=True)
-    cuisine = models.CharField(max_length=100, blank=True)
-    COURSE_CHOICES = (
-        ('MainCourse', 'Main Course'),
-        ('Starter', 'Starter'),
-        ('Dessert', 'Dessert'),
-    )
-    course_type = models.CharField(max_length=12, choices=COURSE_CHOICES, default='MainCourse')
+    cuisine = models.CharField(max_length=100, blank=True, default=None)
+    course_type = models.CharField(max_length=12, blank=False, default=None)
     cooking_time = models.CharField(blank=True, default=None, max_length=10)
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if self.dish_picture:

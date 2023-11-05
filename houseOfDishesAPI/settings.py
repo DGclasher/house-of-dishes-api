@@ -136,8 +136,10 @@ if GOOGLE_CLIENT_ID != '' and GOOGLE_CLIENT_SECRET != '':
     SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 # Djoser Settings
-white_list = ['http://localhost:8000/auth/accounts/profile/',
-              'http://localhost:5173/login/']
+if DEBUG:
+    white_list = ['http://localhost:8000/auth/accounts/profile/','http://localhost:5173/login/']
+else:
+    white_list = ['https://dashboard.aichefmaster.com/login/','https://api.aichefmaster.com/auth/accounts/profile/']
 
 DJOSER = {
     "LOGIN_FIELD": "email",
@@ -171,16 +173,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
@@ -209,9 +206,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#   'http://localhost:8000',
-# )
+if not DEBUG:
+    # CORS_ORIGIN_WHITELIST = (
+    #     'http://localhost:8000',
+    #     'https://dashboard.aichefmaster.com',
+    #     'https://aichefmaster.com',
+    #     'https://api.aichefmaster.com',
+    # )
+    CSRF_TRUSTED_ORIGINS = ['https://api.aichefmaster.com']
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

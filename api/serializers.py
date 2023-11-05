@@ -22,7 +22,7 @@ class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
         fields = (
-            'id', 'name', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
+            'id', 'name','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
             'cuisine', 'course_type', 'cooking_time', 'dish_picture',
         )
 
@@ -40,7 +40,7 @@ class DishSerializer(serializers.ModelSerializer):
 class DishMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'created_at','updated_at','cuisine','course_type']
 
 
 class ChefSerializer(serializers.ModelSerializer):

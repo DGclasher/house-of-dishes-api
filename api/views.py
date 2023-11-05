@@ -17,6 +17,8 @@ class ChefDishesListView(generics.RetrieveAPIView):
     queryset = ChefUser
     serializer_class = ChefListSerializer
     lookup_field = 'pk'
+    permission_classes = []
+    authentication_classes = []
 
 class DishListView(generics.ListAPIView):
     queryset = Dish.objects.all()
@@ -34,8 +36,7 @@ class DishByIdView(generics.RetrieveAPIView):
 class DishListCreateView(generics.CreateAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    # permission_classes = [IsAuthenticated, IsChef]
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsChef]
 
 class DishUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dish.objects.all()
@@ -113,54 +114,33 @@ class DishListIngredients(APIView):
         try:
             filters = request.data
             ingredients = filters['ingredients']
-
             dishes = Dish.objects.all()
             for ingredient in ingredients:
                 dishes = dishes.filter(ingredients__name=ingredient)
-
-            if 'main_course_starter_dessert' in filters:
-                dishes = dishes.filter(main_course_starter_dessert=filters['main_course_starter_dessert'])
-
+            if 'course_type' in filters:
+                dishes = dishes.filter(course_type=filters['course_type'])
             if 'veg_non_veg' in filters:
                 dishes = dishes.filter(veg_non_veg=filters['veg_non_veg'])
-
             serializer = DishSerializer(dishes, many=True)
-
-            return Response(serializer.data)
-        except Exception as error :
-            return  Response({"error" : error})
-
-class DishListName(APIView):
-    permission_classes = []
-
-    def get(self, request, dish_name):
-        try:
-            # Query the data to Retrieve the Specific Data
-            data_queryset = Dish.objects.filter(name=dish_name)
-            # Serialize the data
-            serializer = DishSerializer(data_queryset ,many=True)  # Pass the instance to the serializer
-
-            return Response({'success': True, 'data': serializer.data})
+            return Response({'data':serializer.data}, status=status.HTTP_200_OK)
 
         except Dish.DoesNotExist:
-            return Response({'success': False, 'error': 'Dish not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
 
-        except Exception as e:
-            error_message = str(e)  # Get the string representation of the exception
-            return Response({'success': False, 'error': error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as error :
+            return  Response({"error" : str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-class DishListFilter(APIView):
+class DishSearchView(APIView):
     permission_classes = []
-    serializer_class = DishSerializer
-
+    authentication_classes = []
+    
     def post(self, request):
         try:
-            filters = request.data
-            dishes = Dish.objects.filter(name=filters['name'] , veg_non_veg=filters['veg_non_veg'] , main_course_starter_dessert=filters['course_choice'])
+            query = request.data['query']
+            dishes = Dish.objects.filter(name__iregex=rf'{query}')
             serializer = DishSerializer(dishes, many=True)
-            return  Response({"success" : True , "data" : serializer.data})
+            return Response({'message':'Dish already exists.' ,'data':serializer.data}, status=status.HTTP_200_OK)
         except Dish.DoesNotExist:
-            return Response({'success': False, 'error': 'Dish not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as j:
-            return  Response({"success" : False , "error" : j})
+            return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'err':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
