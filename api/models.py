@@ -8,7 +8,7 @@ class Instructions(models.Model):
     step = models.CharField(blank=False, max_length=200)
     dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='instructions')
     instruction_video_url = models.CharField(max_length=500, blank=True)
-    time = models.IntegerField(blank=False, default=None)
+    time = models.CharField(max_length=50, blank=False)
 
     def __str__(self) -> str:
         return f"{self.step}"
