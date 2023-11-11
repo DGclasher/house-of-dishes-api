@@ -76,7 +76,7 @@ class DishListState(generics.ListAPIView):
         except Dish.DoesNotExist:
             return Response({'message':'Data does not exist.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'err':str(e), 'serializer_errors':serializer.error_messages})
+            return Response({'err':str(e), 'serializer_errors':serializer.error_messages}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DishListCourse(generics.ListAPIView):
     permission_classes = []

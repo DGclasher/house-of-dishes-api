@@ -6,13 +6,13 @@ from rest_framework import serializers
 class InstructionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructions
-        fields = ('step', 'instruction_video_url')
+        fields = ('step', 'instruction_video_url', 'time')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ('name', 'quantity')
+        fields = ('name', 'quantity', 'unit')
 
 
 class DishSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
         fields = (
-            'id', 'name','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
+            'id', 'name','description','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
             'cuisine', 'course_type', 'cooking_time', 'dish_picture',
         )
 
@@ -40,7 +40,7 @@ class DishSerializer(serializers.ModelSerializer):
 class DishMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['id', 'name', 'created_at','updated_at','cuisine','course_type']
+        fields = ['id', 'name', 'created_at','updated_at','cuisine','course_type','veg_non_veg']
 
 
 class ChefSerializer(serializers.ModelSerializer):
