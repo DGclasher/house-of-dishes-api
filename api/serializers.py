@@ -14,22 +14,30 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ('name', 'quantity', 'unit')
 
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('name',)
 
 class DishSerializer(serializers.ModelSerializer):
     ingredients = IngredientSerializer(many=True)
     instructions = InstructionSerializer(many=True)
+    courses = CourseSerializer(many=True)
 
     class Meta:
         model = Dish
         fields = (
             'id', 'name','description','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
-            'cuisine', 'course_type', 'cooking_time', 'dish_picture','kitchen_equipments'
+            'cuisine', 'courses', 'cooking_time', 'dish_picture','kitchen_equipments'
         )
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
         instructions_data = validated_data.pop('instructions')
+        courses_data = validated_data.pop('courses')
         dish = Dish.objects.create(**validated_data)
+        for course in courses_data:
+            Course.objects.create(dish=dish, **course)
         for ingredient_data in ingredients_data:
             Ingredient.objects.create(dish=dish, **ingredient_data)
         for instruction_data in instructions_data:
@@ -38,9 +46,14 @@ class DishSerializer(serializers.ModelSerializer):
 
 
 class DishMinimalSerializer(serializers.ModelSerializer):
+    courses = serializers.SerializerMethodField()
     class Meta:
         model = Dish
-        fields = ['id', 'name', 'created_at','updated_at','cuisine','course_type','veg_non_veg']
+        fields = ['id', 'name', 'created_at','updated_at','cuisine','courses','veg_non_veg']
+
+    def get_courses(self, obj):
+        courses = Course.objects.filter(dish=obj)
+        return CourseSerializer(courses, many=True).data
 
 
 class ChefSerializer(serializers.ModelSerializer):

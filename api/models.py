@@ -22,6 +22,13 @@ class Ingredient(models.Model):
     def __str__(self) -> str:
         return f"Name: {self.name} Quantity: {self.quantity}"
 
+class Course(models.Model):
+    name = models.CharField(max_length=500, blank=True)
+    dish = models.ForeignKey('Dish', on_delete=models.CASCADE, related_name='courses')
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
 class Dish(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
@@ -29,7 +36,6 @@ class Dish(models.Model):
     veg_non_veg = models.CharField(max_length=16, blank=False, default=None)
     popularity_state = models.CharField(max_length=100, blank=True)
     cuisine = models.CharField(max_length=100, blank=True, default=None)
-    course_type = models.CharField(max_length=20, blank=False, default=None)
     cooking_time = models.IntegerField(blank=False, default=None)
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
