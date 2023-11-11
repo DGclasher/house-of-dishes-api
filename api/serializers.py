@@ -23,7 +23,7 @@ class DishSerializer(serializers.ModelSerializer):
         model = Dish
         fields = (
             'id', 'name','description','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
-            'cuisine', 'course_type', 'cooking_time', 'dish_picture',
+            'cuisine', 'course_type', 'cooking_time', 'dish_picture','kitchen_equipments'
         )
 
     def create(self, validated_data):

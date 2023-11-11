@@ -34,6 +34,7 @@ class Dish(models.Model):
     dish_picture = models.ImageField(upload_to="dish_images/", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    kitchen_equipments = models.CharField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
         if self.dish_picture:
