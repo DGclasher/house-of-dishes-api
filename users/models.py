@@ -57,4 +57,16 @@ class ChefUser(UserAccount):
             image.save(output_io, format='JPEG', quality=70)
             self.profile_picture.file = output_io
         super().save(*args, **kwargs)
-        
+
+class GraphicUser(UserAccount):
+    bio = models.TextField(max_length=500, blank=True)
+    profile_picture = models.ImageField(upload_to='Graphic_profiles/', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.profile_picture:
+            image = Image.open(self.profile_picture)
+            output_io = BytesIO()
+            image = image.resize((300, 300))
+            image.save(output_io, format='JPEG', quality=70)
+            self.profile_picture.file = output_io
+        super().save(*args, **kwargs)

@@ -136,6 +136,7 @@ class DishSearchView(APIView):
     
     def post(self, request):
         try:
+
             query = request.data['query']
             dishes = Dish.objects.filter(name__icontains=rf'{query}')
             if not dishes:
@@ -146,3 +147,37 @@ class DishSearchView(APIView):
             return Response({'message':'Dish does not exists.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'err':str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class InstructionsListView(generics.ListAPIView):
+    permission_classes = []
+    authentication_classes = []
+
+    def get(self , request):
+        try:
+            queryset = Instructions.objects.all()
+            serializer = InstructionSerializer(queryset , many=True)
+            return  Response({'data' : serializer.data})
+        except Exception as e :
+            return Response({'error' : e})
+
+class InstructionsUpdateView(APIView):
+    permission_classes = []
+    authentication_classes = []
+    def put(self, request, pk, format=None):
+        try:
+            print(request.user)
+            instruction = Instructions.objects.get(id=pk)
+            new_instruction_video_url = request.data.get('instruction_video_url')
+
+            if new_instruction_video_url:
+                instruction.instruction_video_url = new_instruction_video_url
+                instruction.save()
+
+                return Response({'message': 'Instruction video URL updated successfully'})
+            else:
+                return Response({'error': 'instruction_video_url is required'}, status=status.HTTP_400_BAD_REQUEST)
+        except Instructions.DoesNotExist:
+            return Response({'error': 'Instruction not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

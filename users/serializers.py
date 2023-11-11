@@ -70,3 +70,83 @@ class ChefLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Must include email and password fields")
         return data
 
+
+class RequestPasswordResetSerializer(serializers.Serializer):
+    email = serializers.CharField(min_length=5)
+
+    class Meta:
+        fields = ['email']
+
+    def validate(self, validated_data):
+        try:
+            email = validated_data.get('email')
+            if ChefUser.objects.filter(email=email).exists():
+                user = ChefUser.objects.get(email=email)
+                uidb64 = urlsafe_base64_encode(user.id)
+                token = PasswordResetTokenGenerator().make_token(user)
+
+            return validated_data
+        except:
+            pass
+
+class GraphicUserSerializer(serializers.ModelSerializer):
+    password_repeat = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = GraphicUser
+        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'password_repeat', 'bio', 'profile_picture')
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+    def validate(self, data):
+        if data['password'] != data['password_repeat']:
+            raise serializers.ValidationError("Passwords do not match.")
+        if len(data['password']) < 10:
+            raise serializers.ValidationError("Password length should be more than equal to 10")
+        if not re.findall('\d', data['password']):
+            raise serializers.ValidationError("Password must contain at least 1 digit, 0-9")
+        if not re.findall('[A-Z]', data['password']):
+            raise serializers.ValidationError("Password must contain at least 1 uppercase letter, A-Z")
+        if not re.findall('[a-z]', data['password']):
+            raise serializers.ValidationError("Password must contain at least 1 lowercase letter, a-z")
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password_repeat', None)
+        profile_picture = validated_data.pop('profile_picture', None)
+        graphic_user = GraphicUser(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            bio=validated_data.get('bio', ''),
+        )
+        graphic_user.set_password(validated_data['password'])
+        graphic_user.save()
+
+        if profile_picture:
+            graphic_user.profile_picture = profile_picture
+            graphic_user.save()
+
+        # Add the user to the "Graphics" group
+        graphics_group, created = Group.objects.get_or_create(name='Graphics')
+        graphic_user.groups.add(graphics_group)
+
+        return graphic_user
+
+class GraphicLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+        if email and password:
+            user = authenticate(email=email, password=password)
+            if user:
+                data['user'] = user
+            else:
+                raise serializers.ValidationError("Unable to login with given credentials")
+        else:
+            raise serializers.ValidationError("Must include email and password fields")
+        return data

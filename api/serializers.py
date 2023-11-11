@@ -6,13 +6,13 @@ from rest_framework import serializers
 class InstructionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructions
-        fields = ('step', 'instruction_video_url')
+        fields = ('id','step', 'instruction_video_url' , 'time')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ('name', 'quantity')
+        fields = ('name', 'quantity' , 'unit')
 
 
 class DishSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class DishSerializer(serializers.ModelSerializer):
         model = Dish
         fields = (
             'id', 'name','created_at','updated_at', 'ingredients', 'instructions', 'chef', 'veg_non_veg', 'popularity_state',
-            'cuisine', 'course_type', 'cooking_time', 'dish_picture',
+            'cuisine', 'course_type', 'kitchen_equipments' ,'cooking_time', 'dish_picture', 'description'
         )
 
     def create(self, validated_data):

@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('contact/', ContactView.as_view(), name='contact'),
     path('dish/filter/<str:dish_name>/name', DishSearchView.as_view(), name="dish_by_name"),
+    path('instruction/' , InstructionsListView.as_view() , name="instructions"),
+    path('instructions/update/<int:pk>/', InstructionsUpdateView.as_view(), name='instructions-update'),
 ]
